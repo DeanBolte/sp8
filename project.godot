@@ -16,7 +16,22 @@ _global_script_class_icons={
 [application]
 
 config/name="sp8"
+run/main_scene="res://scenes/Scene1.tscn"
 config/icon="res://icon.png"
+
+[display]
+
+window/size/width=960
+window/size/height=540
+window/size/test_width=1920
+window/size/test_height=1080
+window/stretch/mode="viewport"
+window/stretch/aspect="keep"
+
+[layer_names]
+
+2d_physics/layer_1="World"
+2d_physics/layer_2="Player"
 
 [rendering]
 
