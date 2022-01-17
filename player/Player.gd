@@ -10,6 +10,10 @@ export (float) var FRICTION_GROUND = 0.3
 export (float) var FRICTION_AIR = 0.1
 
 var velocity = Vector2.ZERO
+var respawnLocation
+
+func _ready():
+	respawnLocation = position
 
 func _physics_process(delta):
 	# move
@@ -34,7 +38,7 @@ func move_state(delta):
 		if move == 0:
 			velocity.x = lerp(velocity.x, 0, FRICTION_GROUND)
 		
-		if Input.is_action_just_pressed("ui_up"):
+		if Input.is_action_pressed("ui_up"):
 			velocity.y = -JUMP_STRENGTH
 	else:
 		# wall jump
@@ -55,3 +59,12 @@ func move_state(delta):
 		
 		if move == 0:
 			velocity.x = lerp(velocity.x, 0, FRICTION_AIR)
+
+func respawn():
+	position = respawnLocation
+
+func _on_RespawnDetector_area_entered(area):
+	respawnLocation = area.get_parent().position
+
+func _on_KillZoneDetector_area_entered(area):
+	respawn()
