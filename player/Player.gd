@@ -68,3 +68,21 @@ func _on_RespawnDetector_area_entered(area):
 
 func _on_KillZoneDetector_area_entered(area):
 	respawn()
+
+func _on_RoomDetector_area_entered(area):
+	var camera = $Camera2D
+	var collision_shape = area.get_node("CollisionShape2D")
+	var room_size = collision_shape.shape.extents*2
+	var view_size = get_viewport_rect().size
+	
+	# resize the camera zoom
+	var zoomScale = room_size.x / view_size.x
+	var zoomScaleAlt = room_size.y / view_size.y
+	camera.set_zoom(Vector2(min(zoomScale, zoomScaleAlt), min(zoomScale, zoomScaleAlt)))
+	
+	# set the camera limits
+	camera.limit_top = collision_shape.global_position.y - room_size.y/2
+	camera.limit_left = collision_shape.global_position.x - room_size.x/2
+	
+	camera.limit_bottom = camera.limit_top + room_size.y
+	camera.limit_right = camera.limit_left + room_size.x
