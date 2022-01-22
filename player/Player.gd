@@ -66,9 +66,6 @@ func respawn():
 func _on_RespawnDetector_area_entered(area):
 	respawnLocation = area.get_parent().position
 
-func _on_KillZoneDetector_area_entered(area):
-	respawn()
-
 func _on_RoomDetector_area_entered(area):
 	var camera = $Camera2D
 	var collision_shape = area.get_node("CollisionShape2D")
@@ -86,3 +83,6 @@ func _on_RoomDetector_area_entered(area):
 	
 	camera.limit_bottom = camera.limit_top + room_size.y
 	camera.limit_right = camera.limit_left + room_size.x
+
+func _on_KillZoneDetector_body_entered(body):
+	respawn()

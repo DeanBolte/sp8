@@ -59,4 +59,5 @@ visible = false
 shape = SubResource( 4 )
 [connection signal="area_entered" from="RespawnDetector" to="." method="_on_RespawnDetector_area_entered"]
 [connection signal="area_entered" from="KillZoneDetector" to="." method="_on_KillZoneDetector_area_entered"]
+[connection signal="body_entered" from="KillZoneDetector" to="." method="_on_KillZoneDetector_body_entered"]
 [connection signal="area_entered" from="RoomDetector" to="." method="_on_RoomDetector_area_entered"]
