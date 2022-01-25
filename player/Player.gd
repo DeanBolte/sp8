@@ -1,15 +1,16 @@
 extends KinematicBody2D
 
-export (int) var MAX_VELOCITY = 700
+export (int) var MAX_VELOCITY = 650
 export (int) var ACCELERATION = 2000
-export (int) var JUMP_STRENGTH = 800
+export (int) var JUMP_STRENGTH = 750
 export (int) var WALL_JUMP_STRENGTH = 500
-export (int) var MINIMUM_WALL_VELOCITY = 100
-export (int) var GRAVITY = 800
+export (int) var MINIMUM_WALL_VELOCITY = 50
+export (int) var GRAVITY = 1800
 export (float) var FRICTION_GROUND = 0.3
 export (float) var FRICTION_AIR = 0.1
 
 var velocity = Vector2.ZERO
+var windModifier = 0
 var respawnLocation
 
 func _ready():
@@ -19,7 +20,10 @@ func _physics_process(delta):
 	# move
 	move_state(delta)
 	
-	# gravity
+	# apply wind
+	velocity.x += windModifier * delta
+	
+	# apply gravity
 	velocity.y += GRAVITY * delta
 	
 	# apply velocity
@@ -31,34 +35,38 @@ func move_state(delta):
 	# horizontal movement calculations
 	if move != 0:
 		velocity.x += move * ACCELERATION * delta
-		velocity.x = clamp(velocity.x, -MAX_VELOCITY, MAX_VELOCITY)
 	
-	# air
+	# limit player velocity
+	velocity.x = clamp(velocity.x, -MAX_VELOCITY, MAX_VELOCITY)
+	
 	if is_on_floor():
-		if move == 0:
+		# floor effects
+		# friction
+		if move == 0 || sign(velocity.x) != sign(move):
 			velocity.x = lerp(velocity.x, 0, FRICTION_GROUND)
 		
+		# jump
 		if Input.is_action_pressed("ui_up"):
 			velocity.y = -JUMP_STRENGTH
 	else:
+		# air effects
+		# friction
+		if move == 0 || sign(velocity.x) != sign(move):
+			velocity.x = lerp(velocity.x, 0, FRICTION_AIR)
+		
 		# wall jump
 		if is_on_wall():
 			if Input.is_action_just_pressed("ui_up"):
 				velocity.y = -WALL_JUMP_STRENGTH
-				velocity.x -= WALL_JUMP_STRENGTH * move
+				velocity.x -= WALL_JUMP_STRENGTH * sign(velocity.x)
 			
-			# apply gravity
-			if velocity.y <= MINIMUM_WALL_VELOCITY:
-				velocity.y += GRAVITY * delta
-		else:
-			# apply gravity
-			velocity.y += GRAVITY * delta
+			# slide down wall
+			if velocity.y >= MINIMUM_WALL_VELOCITY:
+				velocity.y = lerp(velocity.y, MINIMUM_WALL_VELOCITY, FRICTION_GROUND)
 		
+		# jump cancel
 		if Input.is_action_just_released("ui_up") && velocity.y < -JUMP_STRENGTH/2:
 			velocity.y = -JUMP_STRENGTH/2
-		
-		if move == 0:
-			velocity.x = lerp(velocity.x, 0, FRICTION_AIR)
 
 func respawn():
 	position = respawnLocation
