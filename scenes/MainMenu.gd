@@ -13,7 +13,7 @@ func _ready():
 	# set up the first frame of the menu
 	moveSelector(0)
 
-func _unhandled_input(event):
+func _unhandled_input(_event):
 	if Input.is_action_just_pressed("ui_down"):
 		moveSelector(1)
 	if Input.is_action_just_pressed("ui_up"):
