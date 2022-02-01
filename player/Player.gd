@@ -8,6 +8,7 @@ export (int) var MINIMUM_WALL_VELOCITY = 50
 export (int) var GRAVITY = 1800
 export (float) var FRICTION_GROUND = 0.3
 export (float) var FRICTION_AIR = 0.1
+export (int) var WALLJUMP_LENIENCE = 2
 
 var velocity = Vector2.ZERO
 var windModifier = 0
@@ -55,12 +56,14 @@ func move_state(delta):
 			velocity.x = lerp(velocity.x, 0, FRICTION_AIR)
 		
 		# wall jump
-		if is_on_wall():
+		var dir = int(test_move(transform, Vector2(-WALLJUMP_LENIENCE, 0))) - int(test_move(transform, Vector2(WALLJUMP_LENIENCE, 0)))
+		if dir != 0:
 			if Input.is_action_just_pressed("ui_up"):
 				velocity.y = -WALL_JUMP_STRENGTH
-				velocity.x -= WALL_JUMP_STRENGTH * sign(velocity.x)
-			
-			# slide down wall
+				velocity.x = WALL_JUMP_STRENGTH * dir
+		
+		# slide down wall
+		if is_on_wall():
 			if velocity.y >= MINIMUM_WALL_VELOCITY:
 				velocity.y = lerp(velocity.y, MINIMUM_WALL_VELOCITY, FRICTION_GROUND)
 		
