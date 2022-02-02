@@ -74,8 +74,11 @@ func move_state(delta):
 func respawn():
 	position = respawnLocation
 
+func set_spawn(spawn_position):
+	respawnLocation = spawn_position
+
 func _on_RespawnDetector_area_entered(area):
-	respawnLocation = area.get_parent().position
+	set_spawn(area.get_parent().position)
 
 func _on_RoomDetector_area_entered(area):
 	var camera = $Camera2D
