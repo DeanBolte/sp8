@@ -100,6 +100,3 @@ func _on_RoomDetector_area_entered(area):
 
 func _on_KillZoneDetector_body_entered(_body):
 	respawn()
-
-func _on_EndArea_body_entered(body):
-	get_tree().change_scene("res://scenes/EndScene.tscn")

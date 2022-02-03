@@ -40,7 +40,7 @@ func moveSelector(move):
 func useMenuItem():
 	match menuItemSelected:
 		0: # Play
-			get_tree().change_scene("res://scenes/Zone0.tscn")
+			Manager.change_scene("res://scenes/Zone0.tscn")
 		1: # Options
 			pass
 		2: # Exit
