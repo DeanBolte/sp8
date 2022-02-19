@@ -2,8 +2,9 @@ extends KinematicBody2D
 
 export (int) var MAX_VELOCITY = 650
 export (int) var ACCELERATION = 2000
-export (int) var JUMP_STRENGTH = 750
-export (int) var WALL_JUMP_STRENGTH = 500
+export (int) var JUMP_STRENGTH = 690
+export (int) var WALL_JUMP_STRENGTH_X = 550
+export (int) var WALL_JUMP_STRENGTH_Y = 400
 export (int) var MINIMUM_WALL_VELOCITY = 50
 export (int) var GRAVITY = 1800
 export (float) var FRICTION_GROUND = 0.3
@@ -11,10 +12,13 @@ export (float) var FRICTION_AIR = 0.1
 export (int) var WALLJUMP_LENIENCE = 2
 
 var velocity = Vector2.ZERO
+var hMoveModifier = 1
 var windModifier = 0
 var respawnLocation
 
 func _ready():
+	position = Manager.playerPosition
+	
 	respawnLocation = position
 
 func _physics_process(delta):
@@ -38,7 +42,8 @@ func move_state(delta):
 		velocity.x += move * ACCELERATION * delta
 	
 	# limit player velocity
-	velocity.x = clamp(velocity.x, -MAX_VELOCITY, MAX_VELOCITY)
+	var current_max_velocity = hMoveModifier * MAX_VELOCITY
+	velocity.x = clamp(velocity.x, -current_max_velocity, current_max_velocity)
 	
 	if is_on_floor():
 		# floor effects
@@ -47,7 +52,7 @@ func move_state(delta):
 			velocity.x = lerp(velocity.x, 0, FRICTION_GROUND)
 		
 		# jump
-		if Input.is_action_pressed("ui_up"):
+		if Input.is_action_just_pressed("ui_up"):
 			velocity.y = -JUMP_STRENGTH
 	else:
 		# air effects
@@ -59,8 +64,8 @@ func move_state(delta):
 		var dir = int(test_move(transform, Vector2(-WALLJUMP_LENIENCE, 0))) - int(test_move(transform, Vector2(WALLJUMP_LENIENCE, 0)))
 		if dir != 0:
 			if Input.is_action_just_pressed("ui_up"):
-				velocity.y = -WALL_JUMP_STRENGTH
-				velocity.x = WALL_JUMP_STRENGTH * dir
+				velocity.y = -WALL_JUMP_STRENGTH_Y
+				velocity.x = WALL_JUMP_STRENGTH_X * dir
 		
 		# slide down wall
 		if is_on_wall():
@@ -70,6 +75,16 @@ func move_state(delta):
 		# jump cancel
 		if Input.is_action_just_released("ui_up") && velocity.y < -JUMP_STRENGTH/2:
 			velocity.y = -JUMP_STRENGTH/2
+	
+	if Input.is_action_pressed("crouch"):
+		$CollisionStanding.disabled = true
+		$CollisionCrouched.disabled = false
+		hMoveModifier = 0.4
+		
+	else:
+		$CollisionStanding.disabled = false
+		$CollisionCrouched.disabled = true
+		hMoveModifier = 1
 
 func respawn():
 	position = respawnLocation
