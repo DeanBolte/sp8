@@ -86,11 +86,18 @@ func move_state(delta):
 		$CollisionCrouched.disabled = true
 		hMoveModifier = 1
 
+func _unhandled_input(event):
+	if Input.is_action_just_pressed("rewind"):
+		rewind_time()
+
 func respawn():
 	position = respawnLocation
 
 func set_spawn(spawn_position):
 	respawnLocation = spawn_position
+
+func rewind_time():
+	Manager.transition_zone("res://scenes/Zone0.tscn", Vector2(800, 1040))
 
 func _on_RespawnDetector_area_entered(area):
 	set_spawn(area.get_parent().position)
