@@ -1,18 +1,13 @@
 extends Area2D
 
-var playerPresent = false
-var Player = null
+var activated = false
 
 onready var SpawnPoint = $Spawn
 
-func _unhandled_input(_event):
-	if Input.is_action_just_pressed("ui_accept"):
-		if playerPresent:
-			Player.set_spawn(SpawnPoint.global_position)
+func _physics_process(delta):
+	if activated:
+		$Sprite.rotate(PI * delta)
 
 func _on_Campfire_body_entered(body):
-	playerPresent = true
-	Player = body
-
-func _on_Campfire_body_exited(_body):
-	playerPresent = false
+	body.set_spawn(SpawnPoint.global_position)
+	activated = true

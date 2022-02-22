@@ -165,13 +165,13 @@ shape = SubResource( 10 )
 [node name="RespawnPoints" type="YSort" parent="."]
 
 [node name="Campfire" parent="RespawnPoints" instance=ExtResource( 6 )]
-position = Vector2( 840, 1048 )
+position = Vector2( 928, 1008 )
 
 [node name="Campfire2" parent="RespawnPoints" instance=ExtResource( 6 )]
-position = Vector2( 720, -392 )
+position = Vector2( 664, -416 )
 
 [node name="Campfire3" parent="RespawnPoints" instance=ExtResource( 6 )]
-position = Vector2( -816, -1352 )
+position = Vector2( -808, -1384 )
 
 [node name="Transition" parent="." instance=ExtResource( 2 )]
 position = Vector2( 48, -2896 )
