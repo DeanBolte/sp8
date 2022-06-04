@@ -6,6 +6,10 @@ var playerPresent = false
 
 onready var Door = get_node(DOOR_PATH)
 
+func _physics_process(delta):
+	if playerPresent:
+		$Sprite.rotate(PI * delta)
+
 func _unhandled_input(event):
 	if Input.is_action_just_pressed("ui_accept"):
 		if playerPresent:

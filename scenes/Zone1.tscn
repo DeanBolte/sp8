@@ -4,7 +4,8 @@
 [ext_resource path="res://assets/basic_sprites/forewall.png" type="Texture" id=2]
 [ext_resource path="res://player/Player.tscn" type="PackedScene" id=3]
 [ext_resource path="res://assets/basic_sprites/red32x32.png" type="Texture" id=4]
-[ext_resource path="res://objects/Transition.tscn" type="PackedScene" id=5]
+[ext_resource path="res://objects/Control/Transition.tscn" type="PackedScene" id=5]
+
 
 [sub_resource type="ConvexPolygonShape2D" id=1]
 points = PoolVector2Array( 0, 0, 32, 0, 32, 32, 0, 32 )

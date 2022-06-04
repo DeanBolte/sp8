@@ -11,10 +11,17 @@ export (float) var FRICTION_GROUND = 0.3
 export (float) var FRICTION_AIR = 0.1
 export (int) var WALLJUMP_LENIENCE = 2
 
+enum {
+	MOVE,
+	ROLL,
+	ATTACK
+}
+
 var velocity = Vector2.ZERO
 var hMoveModifier = 1
 var windModifier = 0
 var respawnLocation
+var state = MOVE
 
 func _ready():
 	position = Manager.playerPosition
@@ -22,8 +29,14 @@ func _ready():
 	respawnLocation = position
 
 func _physics_process(delta):
-	# move
-	move_state(delta)
+	# state
+	match state:
+		MOVE:
+			move_state(delta)
+		ROLL:
+			roll_state(delta)
+		ATTACK:
+			pass
 	
 	# apply wind
 	velocity.x += windModifier * delta
@@ -35,7 +48,7 @@ func _physics_process(delta):
 	velocity = move_and_slide(velocity, Vector2.UP)
 
 func move_state(delta):
-	var move = Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left")
+	var move = Input.get_action_strength("move_right") - Input.get_action_strength("move_left")
 	
 	# horizontal movement calculations
 	if move != 0:
@@ -52,7 +65,7 @@ func move_state(delta):
 			velocity.x = lerp(velocity.x, 0, FRICTION_GROUND)
 		
 		# jump
-		if Input.is_action_just_pressed("ui_up"):
+		if Input.is_action_just_pressed("jump"):
 			velocity.y = -JUMP_STRENGTH
 	else:
 		# air effects
@@ -63,7 +76,7 @@ func move_state(delta):
 		# wall jump
 		var dir = int(test_move(transform, Vector2(-WALLJUMP_LENIENCE, 0))) - int(test_move(transform, Vector2(WALLJUMP_LENIENCE, 0)))
 		if dir != 0:
-			if Input.is_action_just_pressed("ui_up"):
+			if Input.is_action_just_pressed("jump"):
 				velocity.y = -WALL_JUMP_STRENGTH_Y
 				velocity.x = WALL_JUMP_STRENGTH_X * dir
 		
@@ -73,7 +86,7 @@ func move_state(delta):
 				velocity.y = lerp(velocity.y, MINIMUM_WALL_VELOCITY, FRICTION_GROUND)
 		
 		# jump cancel
-		if Input.is_action_just_released("ui_up") && velocity.y < -JUMP_STRENGTH/2:
+		if Input.is_action_just_released("jump") && velocity.y < -JUMP_STRENGTH/2:
 			velocity.y = -JUMP_STRENGTH/2
 	
 	if Input.is_action_pressed("crouch"):
@@ -85,6 +98,12 @@ func move_state(delta):
 		$CollisionStanding.disabled = false
 		$CollisionCrouched.disabled = true
 		hMoveModifier = 1
+	
+	if Input.is_action_pressed("roll"):
+		state = ROLL
+
+func roll_state(delta):
+	pass
 
 func _unhandled_input(event):
 	if Input.is_action_just_pressed("rewind"):
